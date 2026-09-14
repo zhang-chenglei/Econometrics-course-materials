@@ -25,4 +25,3 @@
 
 - Python：`code/python/ch01/01_monte_carlo_foundations.py`
 - Stata：`code/stata/ch01/01_monte_carlo_foundations.do`
-- 引例图（图1-1、图1-2、图1-4）：`code/python/ch01/00_ai_score_scatter.py`
