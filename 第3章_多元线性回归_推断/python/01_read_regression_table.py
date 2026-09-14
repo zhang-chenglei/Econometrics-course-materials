@@ -36,13 +36,13 @@ ability = rng.normal(0, 1, size=N)
 age = np.clip(np.round(rng.normal(20, 1.6, size=N)), 17, 26)
 female = rng.integers(0, 2, size=N)
 
-ai = 8 + 3.2 * ability + 0.25 * (age - 20) - 1.2 * female + rng.normal(0, 3.5, size=N)
+ai = 3 + 3.2 * ability + 0.25 * age - 1.2 * female + rng.normal(0, 3.5, size=N)
 ai = np.clip(ai, 0, 30)
 score = (
-    68
+    56
     + TRUE_BETA_AI * ai
     + 4.5 * ability
-    + 0.6 * (age - 20)
+    + 0.6 * age
     - 1.8 * female
     + rng.normal(0, 5.5, size=N)
 )

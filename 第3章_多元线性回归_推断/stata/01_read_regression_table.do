@@ -20,11 +20,11 @@ replace age = 17 if age < 17
 replace age = 26 if age > 26
 gen female  = runiform() < 0.5
 
-gen ai = 8 + 3.2*ability + 0.25*(age-20) - 1.2*female + rnormal(0, 3.5)
+gen ai = 3 + 3.2*ability + 0.25*age - 1.2*female + rnormal(0, 3.5)
 replace ai = 0  if ai < 0
 replace ai = 30 if ai > 30
 
-gen score = 68 + 1.25*ai + 4.5*ability + 0.6*(age-20) - 1.8*female + rnormal(0, 5.5)
+gen score = 56 + 1.25*ai + 4.5*ability + 0.6*age - 1.8*female + rnormal(0, 5.5)
 
 tempfile master
 save `master'

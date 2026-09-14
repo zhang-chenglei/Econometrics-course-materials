@@ -5,8 +5,8 @@
 
 教学用模拟数据，数据生成过程人为设定且已知：
 
-    ai    = 8 + 3.2*ability + 0.25*(age-20) - 1.2*female + v,  v ~ N(0, 3.5)
-    score = 68 + 1.25*ai + 4.5*ability + 0.6*(age-20) - 1.8*female + u,  u ~ N(0, 5.5)
+    ai    = 3 + 3.2*ability + 0.25*age - 1.2*female + v,  v ~ N(0, 3.5)
+    score = 56 + 1.25*ai + 4.5*ability + 0.6*age - 1.8*female + u,  u ~ N(0, 5.5)
 
 其中 ability 是认知能力，它同时影响 AI 使用时间和课程成绩，是本案例要考察的
 遗漏变量。真实系数 1.25 是我们希望估计出来的目标参数。全部为教学用合成数据，
@@ -45,14 +45,14 @@ age = np.clip(np.round(rng.normal(20, 1.6, size=N)), 17, 26)      # 年龄
 female = rng.integers(0, 2, size=N)                               # 性别
 
 ai = (
-    8 + 3.2 * ability + 0.25 * (age - 20) - 1.2 * female + rng.normal(0, 3.5, size=N)
+    3 + 3.2 * ability + 0.25 * age - 1.2 * female + rng.normal(0, 3.5, size=N)
 )
 ai = np.clip(ai, 0, 30)
 score = (
-    68
+    56
     + TRUE_BETA_AI * ai
     + 4.5 * ability
-    + 0.6 * (age - 20)
+    + 0.6 * age
     - 1.8 * female
     + rng.normal(0, 5.5, size=N)
 )

@@ -2,8 +2,8 @@
 * 生成正文图2-4（遗漏模型与完整模型的 AI 系数及其置信区间）。
 *
 * 教学用模拟数据，数据生成过程人为设定且已知：
-*   ai    = 8 + 3.2*ability + 0.25*(age-20) - 1.2*female + v,  v ~ N(0, 3.5)
-*   score = 68 + 1.25*ai + 4.5*ability + 0.6*(age-20) - 1.8*female + u
+*   ai    = 3 + 3.2*ability + 0.25*age - 1.2*female + v,  v ~ N(0, 3.5)
+*   score = 56 + 1.25*ai + 4.5*ability + 0.6*age - 1.8*female + u
 * 其中 ability 是认知能力，同时影响 AI 使用时间和成绩，是本案例要考察的遗漏变量。
 * 真实系数 1.25 是目标参数。
 *
@@ -26,11 +26,11 @@ replace age = 17 if age < 17
 replace age = 26 if age > 26
 gen female  = runiform() < 0.5
 
-gen ai = 8 + 3.2*ability + 0.25*(age-20) - 1.2*female + rnormal(0, 3.5)
+gen ai = 3 + 3.2*ability + 0.25*age - 1.2*female + rnormal(0, 3.5)
 replace ai = 0  if ai < 0
 replace ai = 30 if ai > 30
 
-gen score = 68 + 1.25*ai + 4.5*ability + 0.6*(age-20) - 1.8*female + rnormal(0, 5.5)
+gen score = 56 + 1.25*ai + 4.5*ability + 0.6*age - 1.8*female + rnormal(0, 5.5)
 
 * ------------------------------------------------------------
 * 2. 两个模型：遗漏模型与完整模型
