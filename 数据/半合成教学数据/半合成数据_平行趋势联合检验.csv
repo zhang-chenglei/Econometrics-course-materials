@@ -1,0 +1,3 @@
+﻿outcome,outcome_label,pre_periods,joint_chi2,joint_p_value,all_individual_pre_p_gt_005
+rd_intensity_w,研发投入强度,4,0.9482514885046333,0.9175385845363335,True
+ln_patent_invention,发明专利申请,4,3.7716613824263274,0.4377891408373962,True
