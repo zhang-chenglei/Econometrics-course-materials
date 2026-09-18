@@ -143,7 +143,7 @@ graph export output/ch01-fig8-ols-sampling-distribution.png, width(2200) replace
 preserve
 collapse (mean) mean=b1 (sd) std=b1, by(n)
 gen bias = mean - 0.5
-export delimited using "ch01_summary.csv", replace
+export delimited using "output/ch01_summary.csv", replace
 list, noobs
 restore
 

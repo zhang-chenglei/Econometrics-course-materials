@@ -82,16 +82,20 @@ for label, xs in specs:
     )
 
 comparison = pd.DataFrame(rows)
-comparison.to_csv(OUTPUT_DIR / "ch02_model_comparison.csv", index=False, encoding="utf-8-sig")
+comparison.to_csv(OUTPUT_DIR / "ch03_model_comparison.csv", index=False, encoding="utf-8-sig")
 
 print("模型比较（被解释变量：课程成绩；真实 AI 系数 = 1.25）：")
 print(comparison.round(4).to_string(index=False))
 print("\n变量相关系数：")
 print(df[["score", "ai", "ability", "age", "female"]].corr().round(3).to_string())
 print("\n完整模型摘要：")
-print(fits["(2) 加年龄、性别、认知能力"].summary().tables[1])
+full = fits["(2) 加年龄、性别、认知能力"]
+print(full.summary().tables[1])
+print(f"\nAI系数t检验：t={full.tvalues['ai']:.3f}, p={full.pvalues['ai']:.4g}")
+joint = full.f_test("age = 0, female = 0")
+print(f"年龄与性别联合检验：F={float(joint.fvalue):.3f}, p={float(joint.pvalue):.4g}")
 
-# 图2-4：AI 系数在遗漏模型与完整模型中的位置
+# 图3-4：AI 系数在遗漏模型与完整模型中的位置
 plt.rcParams["font.sans-serif"] = ["Arial Unicode MS", "SimHei", "DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 
@@ -117,6 +121,6 @@ ax.set_xlabel("AI 使用时间的系数及 95% 置信区间")
 ax.set_title("遗漏变量被控制后，AI 系数回到真实值附近")
 ax.legend(frameon=False, loc="lower right")
 fig.tight_layout()
-output = OUTPUT_DIR / "ch02-fig4-ovb-coefficient-path.png"
+output = OUTPUT_DIR / "ch03-fig4-ovb-coefficient-path.png"
 fig.savefig(output, dpi=220, bbox_inches="tight")
 print(f"\n图形已保存：{output}")

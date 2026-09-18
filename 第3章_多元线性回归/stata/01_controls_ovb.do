@@ -1,4 +1,4 @@
-* 第2章案例：AI 使用与课程成绩——控制变量与遗漏变量偏误
+* 第3章案例：AI 使用与课程成绩——控制变量与遗漏变量偏误
 * 生成正文图2-4（遗漏模型与完整模型的 AI 系数及其置信区间）。
 *
 * 教学用模拟数据，数据生成过程人为设定且已知：
@@ -75,7 +75,7 @@ replace ci_upper = `hi_m2' in 2
 label define mdl 1 "(1) 只含 AI" 2 "(2) 加年龄、性别、认知能力"
 label values id mdl
 label var ai_coef "AI 使用时间的系数"
-export delimited id ai_coef ci_lower ci_upper using "ch02_model_comparison.csv", replace
+export delimited id ai_coef ci_lower ci_upper using "output/ch03_model_comparison.csv", replace
 
 * ------------------------------------------------------------
 * 4. 图2-4：AI 系数在遗漏模型与完整模型中的位置
@@ -87,7 +87,7 @@ twoway (rcap ci_lower ci_upper id, horizontal lcolor(gs10) lwidth(med)) ///
     ytitle("") xtitle("AI 使用时间的系数及 95% 置信区间") ///
     title("遗漏变量被控制后，AI 系数回到真实值附近") ///
     legend(off)
-graph save output/ch02_ovb_coef.gph, replace
-graph export output/ch02-fig4-ovb-coefficient-path.png, width(2400) replace
+graph save output/ch03_ovb_coef.gph, replace
+graph export output/ch03-fig4-ovb-coefficient-path.png, width(2400) replace
 
 display _newline "图形已保存至 output/"

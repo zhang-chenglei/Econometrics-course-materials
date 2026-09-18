@@ -34,14 +34,14 @@
 
 ```bash
 pip install numpy pandas scipy matplotlib statsmodels linearmodels
-python 第2章_多元线性回归_估计/python/01_controls_ovb.py
+python 第3章_多元线性回归/python/01_controls_ovb.py
 ```
 
 **Stata**：打开对应的 `.do` 文件直接运行。
 
 运行结果在哪里：
 
-- 第1—5章的脚本会把图和结果表保存到**脚本同级的 `output/` 文件夹**；
+- 第2—5章的脚本会把图和结果表保存到**脚本同级的 `output/` 文件夹**；
 - 第6—9章的脚本直接在终端打印结果；
 - 第11—14章综合案例需要**进入该文件夹**后再运行（它的各章脚本互相引用）。
 
