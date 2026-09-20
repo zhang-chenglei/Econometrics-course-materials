@@ -18,12 +18,14 @@
 | `stata/` | 该章的 Stata do-file，与 Python 版一一对应 |
 | `AI任务卡.md` | 可直接交给 AI Agent，按「目标—步骤—核验—解释」完成练习 |
 
+> 第6章（因果识别基础）**不设估计脚本**，只有 `AI任务卡.md`——该章的任务是概念性的。
+
 另有：
 
 | 文件夹 | 内容 |
 |--------|------|
-| `第11-14章_综合案例/` | 人工智能试验区综合案例复现包，含 Python、Stata、Jupyter Notebook 三版 |
-| `数据/` | 半合成教学样本、人工智能试验区政策数据 |
+| `code/comprehensive_case/` | 第12—15章人工智能试验区综合案例复现包，含 Python、Stata、Jupyter Notebook 三版 |
+| `data/` | 半合成教学样本、人工智能试验区政策数据（综合案例脚本从这里取数） |
 
 ## 运行
 
@@ -34,7 +36,7 @@
 
 ```bash
 pip install numpy pandas scipy matplotlib statsmodels linearmodels
-python 第3章_多元线性回归/python/01_controls_ovb.py
+python 第3章_多元线性回归_控制与解释/python/01_controls_ovb.py
 ```
 
 **Stata**：打开对应的 `.do` 文件直接运行。
@@ -42,8 +44,8 @@ python 第3章_多元线性回归/python/01_controls_ovb.py
 运行结果在哪里：
 
 - 第2—5章的脚本会把图和结果表保存到**脚本同级的 `output/` 文件夹**；
-- 第6—9章的脚本直接在终端打印结果；
-- 第11—14章综合案例需要**进入该文件夹**后再运行（它的各章脚本互相引用）。
+- 第7—9章的脚本直接在终端打印结果（第6章不设估计脚本）；
+- **综合案例（`code/comprehensive_case/`）必须保留仓库的目录结构再运行**——它的脚本要向上找到仓库根目录的 `data/`，只下载 `code/` 子目录会报找不到数据。
 
 ## 数据说明
 
@@ -56,7 +58,7 @@ python 第3章_多元线性回归/python/01_controls_ovb.py
 ## 遇到问题
 
 1. 看报错的最后一行缺少哪个包，`pip install` 装上即可；
-2. 确认运行目录——第11—14章综合案例要先进入该文件夹再运行；
+2. 确认运行目录——综合案例要先进入 `code/comprehensive_case/`，且仓库根目录的 `data/` 必须在它上面两层；
 3. 仍然解决不了，把「报错信息 + 你运行的命令 + 你在哪一章」发给任课教师。
 
 ## 相关链接
