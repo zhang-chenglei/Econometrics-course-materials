@@ -5,8 +5,9 @@
 
 教学用模拟数据，数据生成过程人为设定且已知：
 
-    ai    = 3 + 3.2*ability + 0.25*age - 1.2*female + v,  v ~ N(0, 3.5)
-    score = 56 + 1.20*ai + 4.5*ability + 0.6*age - 1.8*female + u,  u ~ N(0, 5.5)
+    low_bg = 1{family_bg < 0}        家庭背景较弱=1，家庭背景较好=0（基准组）
+    ai    = 3 + 3.2*ability + 0.25*age - 1.2*low_bg + v,  v ~ N(0, 3.5)
+    score = 56 + 1.20*ai + 4.5*ability + 0.6*age - 1.8*low_bg + u,  u ~ N(0, 5.5)
 
 其中 ability 是认知能力，它同时影响 AI 使用时间和课程成绩，是本案例要考察的
 遗漏变量。真实系数 1.20 是我们希望估计出来的目标参数。全部为教学用合成数据，
@@ -42,10 +43,11 @@ rng = np.random.default_rng(SEED)
 
 ability = rng.normal(0, 1, size=N)                                # 认知能力
 age = np.clip(np.round(rng.normal(20, 1.6, size=N)), 17, 26)      # 年龄
-female = rng.integers(0, 2, size=N)                               # 性别
+family_bg = rng.normal(0, 1, size=N)                              # 家庭背景因子
+low_bg = (family_bg < 0).astype(int)                              # 家庭背景较弱=1，较好=0（基准组）
 
 ai = (
-    3 + 3.2 * ability + 0.25 * age - 1.2 * female + rng.normal(0, 3.5, size=N)
+    3 + 3.2 * ability + 0.25 * age - 1.2 * low_bg + rng.normal(0, 3.5, size=N)
 )
 ai = np.clip(ai, 0, 30)
 score = (
@@ -53,16 +55,16 @@ score = (
     + TRUE_BETA_AI * ai
     + 4.5 * ability
     + 0.6 * age
-    - 1.8 * female
+    - 1.8 * low_bg
     + rng.normal(0, 5.5, size=N)
 )
 
-df = pd.DataFrame({"score": score, "ai": ai, "age": age, "female": female, "ability": ability})
+df = pd.DataFrame({"score": score, "ai": ai, "age": age, "low_bg": low_bg, "ability": ability})
 
-# 两个模型：遗漏模型只放核心变量，完整模型加入年龄、性别和认知能力
+# 两个模型：遗漏模型只放核心变量，完整模型加入年龄、家庭背景和认知能力
 specs = [
     ("(1) 只含 AI", ["ai"]),
-    ("(2) 加年龄、性别、认知能力", ["ai", "age", "female", "ability"]),
+    ("(2) 加年龄、家庭背景、认知能力", ["ai", "age", "low_bg", "ability"]),
 ]
 fits = {}
 rows = []
@@ -87,13 +89,13 @@ comparison.to_csv(OUTPUT_DIR / "ch03_model_comparison.csv", index=False, encodin
 print("模型比较（被解释变量：课程成绩；真实 AI 系数 = 1.20）：")
 print(comparison.round(4).to_string(index=False))
 print("\n变量相关系数：")
-print(df[["score", "ai", "ability", "age", "female"]].corr().round(3).to_string())
+print(df[["score", "ai", "ability", "age", "low_bg"]].corr().round(3).to_string())
 print("\n完整模型摘要：")
-full = fits["(2) 加年龄、性别、认知能力"]
+full = fits["(2) 加年龄、家庭背景、认知能力"]
 print(full.summary().tables[1])
 print(f"\nAI系数t检验：t={full.tvalues['ai']:.3f}, p={full.pvalues['ai']:.4g}")
-joint = full.f_test("age = 0, female = 0")
-print(f"年龄与性别联合检验：F={float(joint.fvalue):.3f}, p={float(joint.pvalue):.4g}")
+joint = full.f_test("age = 0, low_bg = 0")
+print(f"年龄与家庭背景联合检验：F={float(joint.fvalue):.3f}, p={float(joint.pvalue):.4g}")
 
 # 图3-4：AI 系数在遗漏模型与完整模型中的位置
 plt.rcParams["font.sans-serif"] = ["Arial Unicode MS", "SimHei", "DejaVu Sans"]

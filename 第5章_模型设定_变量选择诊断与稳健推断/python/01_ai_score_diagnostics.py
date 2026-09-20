@@ -54,26 +54,25 @@ rng = np.random.default_rng(SEED)
 # ---------------------------------------------------------------------------
 ability = rng.normal(0, 1, size=N)
 age = np.clip(np.round(rng.normal(20, 1.6, size=N)), 17, 26)
-female = rng.integers(0, 2, size=N)
+strong = (ability > 0).astype(int)
 
 family_bg = rng.normal(0, 1, size=N)
 parent_edu = 12 + 2.2 * family_bg + rng.normal(0, 0.30, size=N)
 family_income = 8 + 1.9 * family_bg + rng.normal(0, 0.30, size=N)
 
-ai = 3 + 3.2 * ability + 0.25 * age - 1.2 * female + rng.normal(0, 3.5, size=N)
+ai = 3 + 3.2 * ability + 0.25 * age + rng.normal(0, 3.5, size=N)
 ai = np.clip(ai, 0, 30)
 ai2 = ai**2
-ai_female = ai * female
+ai_strong = ai * strong
 
 sigma = 2.0 + 0.35 * ai
 score = (
     56
     + 1.20 * ai
     - 0.060 * ai2
-    + 0.55 * ai_female
+    + 0.55 * ai_strong
     + 4.5 * ability
     + 0.6 * age
-    - 1.8 * female
     + 0.20 * parent_edu
     + 0.15 * family_income
     + rng.normal(0, sigma, size=N)
@@ -84,9 +83,9 @@ df = pd.DataFrame(
         "score": score,
         "ai": ai,
         "ai2": ai2,
-        "ai_female": ai_female,
+        "ai_strong": ai_strong,
         "age": age,
-        "female": female,
+        "strong": strong,
         "parent_edu": parent_edu,
         "family_income": family_income,
         "ability": ability,
@@ -95,7 +94,7 @@ df = pd.DataFrame(
 df["ln_score"] = np.log(df["score"])
 
 # 本段为了讨论“控制”而使用对 ai 线性的设定；函数形式问题已在第4章处理。
-naive_vars = ["ai", "age", "female", "parent_edu", "family_income"]
+naive_vars = ["ai", "age", "parent_edu", "family_income"]
 full_vars = naive_vars + ["ability"]
 naive = sm.OLS(df["score"], sm.add_constant(df[naive_vars])).fit()
 full = sm.OLS(df["score"], sm.add_constant(df[full_vars])).fit()
@@ -114,7 +113,7 @@ ovb_table = pd.DataFrame(
 ovb_table.to_csv(TABLE_DIR / "ch05_ovb_comparison.csv", index=False, encoding="utf-8-sig")
 
 # FWL：控制变量的集合就是多元回归中除 ai 之外的全部解释变量
-z_vars = ["age", "female", "parent_edu", "family_income", "ability"]
+z_vars = ["age", "parent_edu", "family_income", "ability"]
 ai_resid = sm.OLS(df["ai"], sm.add_constant(df[z_vars])).fit().resid
 score_resid = sm.OLS(df["score"], sm.add_constant(df[z_vars])).fit().resid
 # 两个残差的均值都是 0，故不再加常数项
@@ -179,12 +178,12 @@ diagnostic.to_csv(TABLE_DIR / "ch05_diagnostic_checklist.csv", index=False, enco
 nonlinear_vars = [
     "ai",
     "age",
-    "female",
+    "strong",
     "parent_edu",
     "family_income",
     "ability",
     "ai2",
-    "ai_female",
+    "ai_strong",
 ]
 nonlinear = sm.OLS(
     df["ln_score"], sm.add_constant(df[nonlinear_vars])
@@ -192,12 +191,12 @@ nonlinear = sm.OLS(
 nonlinear_cov = nonlinear.cov_params()
 
 
-def nonlinear_marginal_effect(ai_value: float, female_value: int) -> tuple[float, float]:
+def nonlinear_marginal_effect(ai_value: float, strong_value: int) -> tuple[float, float]:
     """计算完整边际效应及HC1 delta-method标准误。"""
     gradient = pd.Series(0.0, index=nonlinear.params.index)
     gradient.loc["ai"] = 1.0
     gradient.loc["ai2"] = 2.0 * ai_value
-    gradient.loc["ai_female"] = float(female_value)
+    gradient.loc["ai_strong"] = float(strong_value)
     effect = float(gradient @ nonlinear.params)
     std_err = float(np.sqrt(gradient @ nonlinear_cov @ gradient))
     return effect, std_err
@@ -215,12 +214,12 @@ nonlinear_table.to_csv(TABLE_DIR / "ch05_nonlinear_regression.csv", encoding="ut
 
 nonlinear_me_rows = []
 for ai_value in (5, 10, 15, 20):
-    for female_value, group in ((0, "男性"), (1, "女性")):
-        effect, std_err = nonlinear_marginal_effect(ai_value, female_value)
+    for strong_value, group in ((0, "基础弱"), (1, "基础好")):
+        effect, std_err = nonlinear_marginal_effect(ai_value, strong_value)
         nonlinear_me_rows.append(
             {
                 "ai_hours": ai_value,
-                "female": female_value,
+                "strong": strong_value,
                 "group": group,
                 "marginal_effect": effect,
                 "robust_se_HC1": std_err,
@@ -235,12 +234,12 @@ nonlinear_me.to_csv(
 
 nonlinear_ame_rows = []
 sample_mean_ai = float(df["ai"].mean())
-for female_value, group in ((0, "男性"), (1, "女性")):
-    # 与Stata margins female, dydx(ai)一致：在全样本AI分布上评估两个组别。
-    effect, std_err = nonlinear_marginal_effect(sample_mean_ai, female_value)
+for strong_value, group in ((0, "基础弱"), (1, "基础好")):
+    # 与Stata margins strong, dydx(ai)一致：在全样本AI分布上评估两个组别。
+    effect, std_err = nonlinear_marginal_effect(sample_mean_ai, strong_value)
     nonlinear_ame_rows.append(
         {
-            "female": female_value,
+            "strong": strong_value,
             "group": group,
             "sample_mean_ai": sample_mean_ai,
             "average_marginal_effect": effect,

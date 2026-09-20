@@ -27,30 +27,29 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 rng = np.random.default_rng(SEED)
 ability = rng.normal(0, 1, size=N)
 age = np.clip(np.round(rng.normal(20, 1.6, size=N)), 17, 26)
-female = rng.integers(0, 2, size=N)
+strong = (ability > 0).astype(int)
 family_bg = rng.normal(0, 1, size=N)
 parent_edu = 12 + 2.2 * family_bg + rng.normal(0, 0.30, size=N)
 family_income = 8 + 1.9 * family_bg + rng.normal(0, 0.30, size=N)
-ai = 3 + 3.2 * ability + 0.25 * age - 1.2 * female + rng.normal(0, 3.5, size=N)
+ai = 3 + 3.2 * ability + 0.25 * age + rng.normal(0, 3.5, size=N)
 ai = np.clip(ai, 0, 30)
 ai2 = ai**2
-ai_female = ai * female
+ai_strong = ai * strong
 sigma = 2.0 + 0.35 * ai
 score = (
     56
     + 1.20 * ai
     - 0.060 * ai2
-    + 0.55 * ai_female
+    + 0.55 * ai_strong
     + 4.5 * ability
     + 0.6 * age
-    - 1.8 * female
     + 0.20 * parent_edu
     + 0.15 * family_income
     + rng.normal(0, sigma, size=N)
 )
 
-df = pd.DataFrame({"pass": (score >= PASS_THRESHOLD).astype(int), "ai": ai, "age": age, "female": female})
-X = sm.add_constant(df[["ai", "age", "female"]])
+df = pd.DataFrame({"pass": (score >= PASS_THRESHOLD).astype(int), "ai": ai, "age": age, "strong": strong})
+X = sm.add_constant(df[["ai", "age", "strong"]])
 
 lpm = sm.OLS(df["pass"], X).fit(cov_type="HC1")
 logit = sm.Logit(df["pass"], X).fit(disp=False, cov_type="HC1")
