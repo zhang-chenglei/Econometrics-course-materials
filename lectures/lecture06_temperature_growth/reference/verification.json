@@ -1,0 +1,13 @@
+{
+  "original_steps": 9,
+  "tables": 7,
+  "figures": 2,
+  "original_files_unchanged": true,
+  "paper_core_checks_passed": 19,
+  "teaching_regression_records": 48,
+  "teaching_numerical_csv_unchanged": true,
+  "teaching_non_psd_adjustment_messages": 11,
+  "original_non_psd_adjustment_messages": 77,
+  "verification_scope": "完整运行全部原包步骤；包内论文稿表2/3核心19项核对；未逐格核验所有发表表格",
+  "date": "2026-10-11"
+}
