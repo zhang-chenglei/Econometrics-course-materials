@@ -1,0 +1,3 @@
+instrument,RD_coef,RD_se,CI_low,CI_high,first_stage_F
+noise_iv (weak),-0.576247,3.913675,-8.246909,7.094415,0.339050
+ResDensity (strong),1.148990,0.110387,0.932636,1.365344,205.941971

@@ -1,0 +1,17 @@
+{
+  "N": 500,
+  "RD_true_effect": 1.2,
+  "OLS_RD": 1.422432,
+  "OLS_RD_se": 0.05775,
+  "IV_RD": 1.14899,
+  "IV_RD_se": 0.110387,
+  "first_stage_partial_F": 205.941971,
+  "first_stage_partial_R2": 0.257176,
+  "weak_instrument_F": 0.33905,
+  "weak_instrument_RD": -0.576247,
+  "overid_stat": 0.184357,
+  "overid_p": 0.667656,
+  "dwh_F": 8.680515,
+  "dwh_p_chi2": 0.003216,
+  "dwh_p_F": 0.003368
+}
